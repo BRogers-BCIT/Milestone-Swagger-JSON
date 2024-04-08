@@ -1,0 +1,691 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Story Teller API",
+    "description": "The story teller API uses a large language model to generate short stories from user input. The goal of this API is to be to help generate a background for a fantasy game. It can also help create a jumping off point for writers who are having difficulty starting and need a helping hand. Story teller is a simple tool that has a lot of uses and can help a variety of people.",
+    "contact": {
+      "name": "Story Teller",
+      "url": "https://ump45-comp4537-tp.netlify.app/html/app/landing.html"
+    },
+    "license": {
+      "name": "Large Language Model",
+      "url": "https://huggingface.co/meta-llama/Llama-2-13b-chat-hf"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/BROGERS42_1/Story-Teller-API/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Admin",
+      "description": "Secured Admin-only calls."
+    },
+    {
+      "name": "Users",
+      "description": "Operations available to regular user accounts."
+    }
+  ],
+  "paths": {
+    "/content/get-all-endpoint-requests/{email}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get an array of usage statistics of all API endpoints",
+        "description": "Returns an array of key-value pairs indicating how many times each endpoint has been called.\n",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "Admin email address",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data successfully found and returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "example": [
+                      {
+                        "create_story_calls__sum": 10
+                      },
+                      {
+                        "update_title_calls__sum": 20
+                      },
+                      {
+                        "get_stories_calls__sum": 30
+                      },
+                      {
+                        "get_story_calls__sum": 15
+                      },
+                      {
+                        "delete_story_calls__sum": 5
+                      },
+                      {
+                        "create_user_calls__sum": 25
+                      },
+                      {
+                        "update_password_calls__sum": 8
+                      },
+                      {
+                        "login_calls__sum": 50
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid passed value caused an error.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Invalid passed email."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/get-users-call-sums/{email}": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get an array of API endpoint usage statistics for each user.",
+        "description": "Returns an array of key-value pairs indicating how many times each user has called an API endpoint.\n",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "Admin email address",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data successfully found and returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "example": [
+                      {
+                        "user_1": 10
+                      },
+                      {
+                        "user_2": 20
+                      },
+                      {
+                        "user_3": 30
+                      },
+                      {
+                        "user_3": 15
+                      },
+                      {
+                        "user_5": 5
+                      },
+                      {
+                        "user_6": 25
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid passed value caused an error.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Admin with the passed email does not exist."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/content/get-call-count/{email}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get the number of API calls made.",
+        "description": "Returns an array of key-value pairs indicating how many times each endpoint has been called.\n",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "User email address",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data successfully found and returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "calls_sum": 10
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid passed value caused an error.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "User with the passed email does not exist."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/story": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Creates a new story in the database.",
+        "description": "Takes a stories content, its title, and a user email and creates a new story in the database.\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/story_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Story successfully added to DB",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Added content successfully."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "An invalid passed value caused an error.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "User with the passed email does not exist."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/story/{email}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get all stories made by a user.",
+        "description": "Returns an array of titles and an assosiated array of story ID's.\n",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "User email address",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Stories successfully found and returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "titles": [
+                        "story A",
+                        "storyB",
+                        "storyC"
+                      ]
+                    },
+                    {
+                      "storyIDs": [
+                        10,
+                        23,
+                        14
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid passed value caused an error.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "User with the passed email does not exist."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/story/id/{email}{storyID}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a specific story from a user by its ID.",
+        "description": "Returns the title and content of the story assosiated with the story ID if it belongs to the user.\n",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "User email address",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "storyID",
+            "in": "path",
+            "description": "ID of story being found",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Story successfully found and returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "content": "A very good short story."
+                    },
+                    {
+                      "title": "A good name for a short story"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "An invalid passed value (email or story ID) caused an error.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "User with the passed email does not exist. / Story with the passed ID does not exist."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/story/title": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Updates a given story with a new title.",
+        "description": "Takes a new story title and a story ID and updates the story in the database wit the new title\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/story_title_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Data successfully found and update preformed",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Successfully updated the title."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "An invalid passed value (email or story ID) caused an error.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "User with the passed email does not exist. / Story with the passed ID does not exist."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/delete-story/{email}{storyID}": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Deletes a specific story.",
+        "description": "Takes a story ID, finds the story in the DB and deletes it.\n",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "description": "User email address",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "storyID",
+            "in": "path",
+            "description": "ID of story being found",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data successfully found and deleted from the database",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Deleted story."
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "An invalid passed value (email or story ID) caused an error.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "User with the passed email does not exist. / Story with the passed ID does not exist."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Authenticate a user to receive a session token as a cookie.",
+        "description": "Takes an email address and password, matches the password with the\nhashed password in the DB and returns a token on match.\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "body": {
+                  "summary": "Valid required parameters to login",
+                  "value": {
+                    "email": "john@john.com",
+                    "password": "123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Login successful"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "The passed email or password was invalid or not found.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "User with the passed email does not exist. / Password is invalid."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/signup": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Signup a new user.",
+        "description": "Creates a new user with a hashed password and security question and answer in the database if email is unique.\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "body": {
+                  "summary": "Valid required parameters to signup",
+                  "value": {
+                    "email": "name@domain.com",
+                    "password": "PASSWORD",
+                    "securityQuestion": "question_0 (custom or from login UI)",
+                    "securityAnswer": "ANY ANSWER CASE SENSITIVE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Signup successful",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Signup successful"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid field.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Check your request parameters and try again."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "An account already exists with the same email.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Resource already exists."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Reset a user's password.",
+        "description": "Updates the user's password if the security question and security answer matches data stored in DB.\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "body": {
+                  "summary": "Valid required parameters to signup",
+                  "value": {
+                    "email": "name@domain.com",
+                    "password": "PASSWORD",
+                    "securityQuestion": "SECURITY QUESTION CASE SENSITIVE",
+                    "securityAnswer": "ANSWER CASE SENSITIVE"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password reset successful",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Password reset successful"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid field.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Check your request parameters and try again."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "story_body": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email address"
+          },
+          "contents": {
+            "type": "string",
+            "description": "The contents of the new story"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the new story"
+          }
+        }
+      },
+      "story_title_body": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email address"
+          },
+          "storyID": {
+            "type": "string",
+            "description": "ID of story being found"
+          },
+          "title": {
+            "type": "string",
+            "description": "The new title to use"
+          }
+        }
+      }
+    }
+  }
+}
